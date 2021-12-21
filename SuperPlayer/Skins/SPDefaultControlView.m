@@ -20,6 +20,7 @@
 
 @interface SPDefaultControlView () <UIGestureRecognizerDelegate, PlayerSliderDelegate>
 
+@property (nonatomic, assign) BOOL showRate;    //!< 是否显示播放倍速，根据playModel的数据确定值
 
 @end
 
@@ -38,6 +39,7 @@
         [self.bottomImageView addSubview:self.resolutionBtn];
         [self.bottomImageView addSubview:self.fullScreenBtn];
         [self.bottomImageView addSubview:self.totalTimeLabel];
+        [self.bottomImageView addSubview:self.rateBtn];//播放速度按钮
         
         [self.topImageView addSubview:self.captureBtn];
         [self.topImageView addSubview:self.danmakuBtn];
@@ -60,6 +62,7 @@
         self.moreBtn.hidden     = YES;
         self.resolutionBtn.hidden   = YES;
         self.moreContentView.hidden = YES;
+        self.rateBtn.hidden = YES;
         // 初始化时重置controlView
         [self playerResetControlView];
     }
@@ -137,6 +140,13 @@
     [self.resolutionBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(30);
         make.width.mas_greaterThanOrEqualTo(45);
+        make.trailing.equalTo(self.showRate ? self.rateBtn.mas_trailing : self.bottomImageView.mas_trailing).offset(-8);
+        make.centerY.equalTo(self.startBtn.mas_centerY);
+    }];
+    
+    [self.rateBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(30);
+        make.width.mas_greaterThanOrEqualTo(45);
         make.trailing.equalTo(self.bottomImageView.mas_trailing).offset(-8);
         make.centerY.equalTo(self.startBtn.mas_centerY);
     }];
@@ -191,6 +201,24 @@
     // topImageView上的按钮的文字
     [self.resolutionBtn setTitle:sender.titleLabel.text forState:UIControlStateNormal];
     [self.delegate controlViewSwitch:self withDefinition:sender.titleLabel.text];
+}
+
+- (void)changePlayRate:(UIButton *)sender {
+    self.rateCurrentBtn.selected = NO;
+    self.rateCurrentBtn.backgroundColor = [UIColor clearColor];
+    self.rateCurrentBtn = sender;
+    self.rateCurrentBtn.selected = YES;
+    self.rateCurrentBtn.backgroundColor = RGBA(34, 30, 24, 1);
+    
+    // topImageView上的按钮的文字
+    NSString *rateString = sender.titleLabel.text;
+    if ([rateString isEqualToString:@"1.0x"]) {
+        rateString = @"倍速";
+    }
+    [self.rateBtn setTitle:rateString forState:UIControlStateNormal];
+    if ([self.delegate respondsToSelector:@selector(controlViewSwitch:withRate:)]) {
+        [self.delegate controlViewSwitch:self withRate:sender.titleLabel.text];
+    }
 }
 
 - (void)backBtnClick:(UIButton *)sender {
@@ -277,6 +305,24 @@
     return _resolutionView;
 }
 
+- (UIView *)rateView {
+    if (!_rateView) {
+        _rateView = [[UIView alloc] initWithFrame:CGRectZero];
+        _rateView.hidden = YES;
+        [self addSubview:_rateView];
+        [_rateView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.width.mas_equalTo(330);
+            make.height.mas_equalTo(self.mas_height);
+            make.trailing.equalTo(self.mas_trailing).offset(0);
+            make.top.equalTo(self.mas_top).offset(0);
+        }];
+        
+        _rateView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+        
+    }
+    return _rateView;
+}
+//修改分辨率
 - (void)resolutionBtnClick:(UIButton *)sender {
     self.topImageView.hidden = YES;
     self.bottomImageView.hidden = YES;
@@ -285,6 +331,20 @@
     // 显示隐藏分辨率View
     self.resolutionView.hidden = NO;
     [DataReport report:@"change_resolution" param:nil];
+    
+    [self cancelFadeOut];
+    self.isShowSecondView = YES;
+}
+
+//修改视频播放倍速
+- (void)rateBtnClick:(UIButton *)sender {
+    self.topImageView.hidden = YES;
+    self.bottomImageView.hidden = YES;
+    self.lockBtn.hidden = YES;
+    
+    // 显示倍数View
+    self.rateView.hidden = NO;
+    [DataReport report:@"change_rate" param:nil];
     
     [self cancelFadeOut];
     self.isShowSecondView = YES;
@@ -325,12 +385,28 @@
     self.fullScreenBtn.selected = self.isLockScreen;
     self.fullScreenBtn.hidden   = YES;
     self.resolutionBtn.hidden   = NO;
+    if (self.showRate) {
+        self.rateBtn.hidden = NO;
+    }
     self.moreBtn.hidden         = NO;
     self.captureBtn.hidden      = NO;
     self.danmakuBtn.hidden      = NO;
     
     [self.backBtn setImage:SuperPlayerImage(@"back_full") forState:UIControlStateNormal];
-
+    //横屏更改布局
+    [self.rateBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(30);
+        make.width.mas_greaterThanOrEqualTo(45);
+        make.trailing.equalTo(self.bottomImageView.mas_trailing).offset(-8);
+        make.centerY.equalTo(self.startBtn.mas_centerY);
+    }];
+    
+    [self.resolutionBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(30);
+        make.width.mas_greaterThanOrEqualTo(45);
+        make.trailing.equalTo(self.showRate ? self.rateBtn.mas_leading : self.bottomImageView.mas_trailing).offset(-8);
+        make.centerY.equalTo(self.startBtn.mas_centerY);
+    }];
     
     [self.totalTimeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         if (self.resolutionArray.count > 0) {
@@ -358,12 +434,13 @@
     self.fullScreenBtn.selected = NO;
     self.fullScreenBtn.hidden   = NO;
     self.resolutionBtn.hidden   = YES;
+    self.rateBtn.hidden         = YES;
     self.moreBtn.hidden         = YES;
     self.captureBtn.hidden      = YES;
     self.danmakuBtn.hidden      = YES;
     self.moreContentView.hidden = YES;
     self.resolutionView.hidden  = YES;
-    
+    self.rateView.hidden        = YES;
     [self.totalTimeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.trailing.equalTo(self.fullScreenBtn.mas_leading);
         make.centerY.equalTo(self.startBtn.mas_centerY);
@@ -525,6 +602,17 @@
     return _resolutionBtn;
 }
 
+- (UIButton *)rateBtn {
+    if (!_rateBtn) {
+        _rateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _rateBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        _rateBtn.backgroundColor = [UIColor clearColor];
+        [_rateBtn addTarget:self action:@selector(rateBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        [_rateBtn setTitle:@"倍速" forState:UIControlStateNormal];
+    }
+    return _rateBtn;
+}
+
 - (UIButton *)backLiveBtn {
     if (!_backLiveBtn) {
         _backLiveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -588,6 +676,7 @@
     [super setHidden:hidden];
     if (hidden) {        
         self.resolutionView.hidden = YES;
+        self.rateView.hidden        = YES;
         self.moreContentView.hidden = YES;
         if (!self.isLockScreen) {
             self.topImageView.hidden = NO;
@@ -608,6 +697,7 @@
     self.totalTimeLabel.text         = @"00:00";
     self.playeBtn.hidden             = YES;
     self.resolutionView.hidden       = YES;
+    self.rateView.hidden             = YES;
     self.backgroundColor             = [UIColor clearColor];
     self.moreBtn.enabled         = YES;
     self.lockBtn.hidden              = !self.isFullScreen;
@@ -674,10 +764,66 @@
      isTimeShifting:(BOOL)isTimeShifting
          isAutoPlay:(BOOL)isAutoPlay
 {
+    self.showRate = (model.playRate != nil && model.playRateArray.count > 0);
     [self setPlayState:isAutoPlay];
     self.backLiveBtn.hidden = !isTimeShifting;
     self.moreContentView.isLive = isLive;
+    //配置显示视频播放倍速
+    [self configPlayRateView:model];
+    //配置播放分辨率
+    [self configResolutionView:model];
     
+    if (self.isLive != isLive) {
+        self.isLive = isLive;
+        [self setNeedsLayout];
+    }
+    // 时移的时候不能切清晰度
+    self.resolutionBtn.userInteractionEnabled = !isTimeShifting;
+}
+
+//配置播放倍速视图
+- (void)configPlayRateView:(SuperPlayerModel *)model {
+    for (UIView *subView in self.rateView.subviews) {
+        [subView removeFromSuperview];
+    }
+    
+    _rateArray = model.playRateArray;
+    UILabel *lable = [UILabel new];
+    lable.text = @"播放倍速";
+    lable.textAlignment = NSTextAlignmentCenter;
+    lable.textColor = [UIColor whiteColor];
+    [self.rateView addSubview:lable];
+    [lable mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.equalTo(self.resolutionView.mas_width);
+        make.height.mas_equalTo(30);
+        make.left.equalTo(self.resolutionView.mas_left);
+        make.top.equalTo(self.resolutionView.mas_top).mas_offset(20);
+    }];
+    
+    // 分辨率View上边的Btn
+    for (NSInteger i = 0 ; i < _rateArray.count; i++) {
+        UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [btn setTitle:_rateArray[i] forState:UIControlStateNormal];
+        [btn setTitleColor:RGBA(252, 89, 81, 1) forState:UIControlStateSelected];
+        [self.rateView addSubview:btn];
+        [btn addTarget:self action:@selector(changePlayRate:) forControlEvents:UIControlEventTouchUpInside];
+        [btn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.width.equalTo(self.rateView.mas_width);
+            make.height.mas_equalTo(45);
+            make.left.equalTo(self.rateView.mas_left);
+            make.centerY.equalTo(self.rateView.mas_centerY).offset((i-self.rateArray.count/2.0+0.5)*45);
+        }];
+        btn.tag = MODEL_TAG_BEGIN+i;
+        
+        if ([self.rateArray[i] isEqualToString:model.playRate]) {
+            btn.selected = YES;
+            btn.backgroundColor = RGBA(34, 30, 24, 1);
+            self.rateCurrentBtn = btn;
+        }
+    }
+}
+
+- (void)configResolutionView:(SuperPlayerModel *)model {
     for (UIView *subview in self.resolutionView.subviews)
         [subview removeFromSuperview];
 
@@ -717,13 +863,8 @@
             self.resoultionCurrentBtn = btn;
         }
     }
-    if (self.isLive != isLive) {
-        self.isLive = isLive;
-        [self setNeedsLayout];
-    }
-    // 时移的时候不能切清晰度
-    self.resolutionBtn.userInteractionEnabled = !isTimeShifting;
 }
+
 
 /** 播放按钮状态 */
 - (void)setPlayState:(BOOL)state {

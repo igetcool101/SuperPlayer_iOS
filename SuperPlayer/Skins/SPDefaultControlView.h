@@ -77,4 +77,9 @@
 @property (nonatomic, strong) UIButton               *pointJumpBtn;
 
 @property BOOL isLive;
+
+@property (nonatomic, strong) UIButton *rateBtn;     //!< 视频播放速度按钮
+@property (nonatomic, strong) UIView *rateView;     //!< 播放倍速下拉视图
+@property (nonatomic, strong) NSArray <NSString *>*rateArray;     //!< 速度title字符串<1x , 1.5x, 2x>
+@property (nonatomic, strong) UIButton *rateCurrentBtn;     //!< 当前选中的播放倍速
 @end

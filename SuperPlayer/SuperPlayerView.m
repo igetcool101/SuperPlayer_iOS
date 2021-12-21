@@ -1303,6 +1303,12 @@ static UISlider * _volumeSlider;
     }
 }
 
+//切换倍速
+- (void)controlViewSwitch:(UIView *)controlView withRate:(NSString *)rate {
+//    [self showMiddleBtnMsg:[NSString stringWithFormat:@"正在切换到%@倍速", rate] withAction:ActionNone];
+    [self.vodPlayer setRate:[rate floatValue]];
+}
+
 - (void)controlViewConfigUpdate:(SuperPlayerView *)controlView withReload:(BOOL)reload {
     if (self.isLive) {
         [self.livePlayer setMute:self.playerConfig.mute];

@@ -155,7 +155,9 @@ extern NSNotificationName kSuperPlayerModelFail;
  */
 @property (readonly) NSArray *playDefinitions;
 
-
+//下面这两个必须传，不然就不显示播放倍速了
+@property (nonatomic, strong) NSString *playRate;     //!< 播放倍速默认@"倍数" 相当于1.0x倍数
+@property (nonatomic, strong) NSArray *playRateArray;     //!< 播放倍速数组必须如下格式@[1.0x,1.5x,2.0x]
 
 - (void)requestPlayInfo:(SuperPlayerView *)playerView;
 @end

@@ -1305,7 +1305,9 @@ static UISlider * _volumeSlider;
 
 //切换倍速
 - (void)controlViewSwitch:(UIView *)controlView withRate:(NSString *)rate {
-//    [self showMiddleBtnMsg:[NSString stringWithFormat:@"正在切换到%@倍速", rate] withAction:ActionNone];
+    if ([self.playerModel.playRate isEqualToString:rate])
+        return;
+    self.playerModel.playRate = rate;
     [self.vodPlayer setRate:[rate floatValue]];
 }
 

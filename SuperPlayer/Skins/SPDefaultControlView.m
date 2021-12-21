@@ -209,7 +209,7 @@
     self.rateCurrentBtn = sender;
     self.rateCurrentBtn.selected = YES;
     self.rateCurrentBtn.backgroundColor = RGBA(34, 30, 24, 1);
-    
+    self.rateView.hidden        = YES;
     // topImageView上的按钮的文字
     NSString *rateString = sender.titleLabel.text;
     if ([rateString isEqualToString:@"1.0x"]) {

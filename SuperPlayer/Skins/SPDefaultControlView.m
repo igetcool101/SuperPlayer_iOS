@@ -140,14 +140,14 @@
     [self.resolutionBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(30);
         make.width.mas_greaterThanOrEqualTo(45);
-        make.trailing.equalTo(self.showRate ? self.rateBtn.mas_trailing : self.bottomImageView.mas_trailing).offset(-8);
+        make.trailing.equalTo(self.bottomImageView.mas_trailing).offset(-8);
         make.centerY.equalTo(self.startBtn.mas_centerY);
     }];
     
     [self.rateBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(30);
         make.width.mas_greaterThanOrEqualTo(45);
-        make.trailing.equalTo(self.bottomImageView.mas_trailing).offset(-8);
+        make.trailing.equalTo(self.resolutionBtn.mas_leading).offset(-8);
         make.centerY.equalTo(self.startBtn.mas_centerY);
     }];
     
@@ -384,7 +384,7 @@
     self.lockBtn.hidden         = NO;
     self.fullScreenBtn.selected = self.isLockScreen;
     self.fullScreenBtn.hidden   = YES;
-    self.resolutionBtn.hidden   = NO;
+    self.resolutionBtn.hidden   = self.resolutionArray.count == 0;
     if (self.showRate) {
         self.rateBtn.hidden = NO;
     }
@@ -394,26 +394,37 @@
     
     [self.backBtn setImage:SuperPlayerImage(@"back_full") forState:UIControlStateNormal];
     //横屏更改布局
-    [self.rateBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+    [self.resolutionBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(30);
         make.width.mas_greaterThanOrEqualTo(45);
         make.trailing.equalTo(self.bottomImageView.mas_trailing).offset(-8);
         make.centerY.equalTo(self.startBtn.mas_centerY);
     }];
     
-    [self.resolutionBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+    [self.rateBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(30);
         make.width.mas_greaterThanOrEqualTo(45);
-        make.trailing.equalTo(self.showRate ? self.rateBtn.mas_leading : self.bottomImageView.mas_trailing).offset(-8);
+        if (self.resolutionArray.count > 0) {
+            make.trailing.equalTo(self.resolutionBtn.mas_leading).offset(-8);
+        } else {
+            make.trailing.equalTo(self.bottomImageView.mas_trailing).offset(-8);
+        }
+        
         make.centerY.equalTo(self.startBtn.mas_centerY);
     }];
     
     [self.totalTimeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-        if (self.resolutionArray.count > 0) {
+        if (self.resolutionArray.count > 0 && self.showRate) {
+            //两个都有
+            make.trailing.equalTo(self.rateBtn.mas_leading);
+        } else if (self.resolutionArray.count > 0) {
             make.trailing.equalTo(self.resolutionBtn.mas_leading);
+        } else if(self.showRate) {
+            make.trailing.equalTo(self.rateBtn.mas_leading);
         } else {
             make.trailing.equalTo(self.bottomImageView.mas_trailing);
         }
+        
         make.centerY.equalTo(self.startBtn.mas_centerY);
         make.width.mas_equalTo(self.isLive?10:60);
     }];
@@ -788,6 +799,7 @@
     }
     
     _rateArray = model.playRateArray;
+    
     UILabel *lable = [UILabel new];
     lable.text = @"播放倍速";
     lable.textAlignment = NSTextAlignmentCenter;
@@ -811,7 +823,7 @@
             make.width.equalTo(self.rateView.mas_width);
             make.height.mas_equalTo(45);
             make.left.equalTo(self.rateView.mas_left);
-            make.centerY.equalTo(self.rateView.mas_centerY).offset((i-self.rateArray.count/2.0+0.5)*45);
+            make.centerY.equalTo(self.rateView.mas_centerY).offset((self.rateArray.count/2.0-i-0.5)*45);
         }];
         btn.tag = MODEL_TAG_BEGIN+i;
         
@@ -853,7 +865,7 @@
             make.width.equalTo(self.resolutionView.mas_width);
             make.height.mas_equalTo(45);
             make.left.equalTo(self.resolutionView.mas_left);
-            make.centerY.equalTo(self.resolutionView.mas_centerY).offset((i-self.resolutionArray.count/2.0+0.5)*45);
+            make.centerY.equalTo(self.resolutionView.mas_centerY).offset((self.resolutionArray.count/2.0-i-0.5)*45);
         }];
         btn.tag = MODEL_TAG_BEGIN+i;
         

@@ -21,7 +21,7 @@
 @interface SPDefaultControlView () <UIGestureRecognizerDelegate, PlayerSliderDelegate>
 
 @property (nonatomic, assign) BOOL showRate;    //!< 是否显示播放倍速，根据playModel的数据确定值
-
+@property (nonatomic, strong) UIImageView *arrowImg;     //!< 选中图片
 @end
 
 @implementation SPDefaultControlView
@@ -193,10 +193,14 @@
  */
 - (void)changeResolution:(UIButton *)sender {
     self.resoultionCurrentBtn.selected = NO;
-    self.resoultionCurrentBtn.backgroundColor = [UIColor clearColor];
     self.resoultionCurrentBtn = sender;
     self.resoultionCurrentBtn.selected = YES;
-    self.resoultionCurrentBtn.backgroundColor = RGBA(34, 30, 24, 1);
+    
+    [self.arrowImg mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.mas_equalTo(self.resolutionView).offset(-35);
+        make.width.height.mas_equalTo(16);
+        make.centerY.mas_equalTo(self.resoultionCurrentBtn);
+    }];
     
     // topImageView上的按钮的文字
     [self.resolutionBtn setTitle:sender.titleLabel.text forState:UIControlStateNormal];
@@ -205,10 +209,13 @@
 
 - (void)changePlayRate:(UIButton *)sender {
     self.rateCurrentBtn.selected = NO;
-    self.rateCurrentBtn.backgroundColor = [UIColor clearColor];
     self.rateCurrentBtn = sender;
     self.rateCurrentBtn.selected = YES;
-    self.rateCurrentBtn.backgroundColor = RGBA(34, 30, 24, 1);
+    [self.arrowImg mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.mas_equalTo(self.rateView).offset(-35);
+        make.width.height.mas_equalTo(16);
+        make.centerY.mas_equalTo(self.rateCurrentBtn);
+    }];
     self.rateView.hidden        = YES;
     // topImageView上的按钮的文字
     NSString *rateString = sender.titleLabel.text;
@@ -331,7 +338,12 @@
     // 显示隐藏分辨率View
     self.resolutionView.hidden = NO;
     [DataReport report:@"change_resolution" param:nil];
-    
+    [self.resolutionView addSubview:self.arrowImg];
+    [self.arrowImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.mas_equalTo(self.resolutionView).offset(-35);
+        make.width.height.mas_equalTo(16);
+        make.centerY.mas_equalTo(self.resoultionCurrentBtn);
+    }];
     [self cancelFadeOut];
     self.isShowSecondView = YES;
 }
@@ -345,7 +357,12 @@
     // 显示倍数View
     self.rateView.hidden = NO;
     [DataReport report:@"change_rate" param:nil];
-    
+    [self.rateView addSubview:self.arrowImg];
+    [self.arrowImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.mas_equalTo(self.rateView).offset(-35);
+        make.width.height.mas_equalTo(16);
+        make.centerY.mas_equalTo(self.rateCurrentBtn);
+    }];
     [self cancelFadeOut];
     self.isShowSecondView = YES;
 }
@@ -624,6 +641,14 @@
     return _rateBtn;
 }
 
+- (UIImageView *)arrowImg {
+    if (!_arrowImg) {
+        _arrowImg = [[UIImageView alloc] init];
+        _arrowImg.image = SuperPlayerImage(@"selected");
+    }
+    return _arrowImg;
+}
+
 - (UIButton *)backLiveBtn {
     if (!_backLiveBtn) {
         _backLiveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -801,9 +826,12 @@
     _rateArray = model.playRateArray;
     
     UILabel *lable = [UILabel new];
-    lable.text = @"播放倍速";
+    lable.text = @"倍速";
     lable.textAlignment = NSTextAlignmentCenter;
     lable.textColor = [UIColor whiteColor];
+    if (@available(iOS 8.2, *)) {
+        lable.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
+    }
     [self.rateView addSubview:lable];
     [lable mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.equalTo(self.resolutionView.mas_width);
@@ -816,8 +844,12 @@
     for (NSInteger i = 0 ; i < _rateArray.count; i++) {
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
         [btn setTitle:_rateArray[i] forState:UIControlStateNormal];
-        [btn setTitleColor:RGBA(252, 89, 81, 1) forState:UIControlStateSelected];
+        [btn setTitleColor:[UIColor colorWithRed:250/255.0 green:100/255.0 blue:0/255.0 alpha:1.0] forState:UIControlStateSelected];
+        [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [self.rateView addSubview:btn];
+        if (@available(iOS 8.2, *)) {
+            btn.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
+        }
         [btn addTarget:self action:@selector(changePlayRate:) forControlEvents:UIControlEventTouchUpInside];
         [btn mas_makeConstraints:^(MASConstraintMaker *make) {
             make.width.equalTo(self.rateView.mas_width);
@@ -828,8 +860,8 @@
         btn.tag = MODEL_TAG_BEGIN+i;
         
         if ([self.rateArray[i] isEqualToString:model.playRate]) {
+            
             btn.selected = YES;
-            btn.backgroundColor = RGBA(34, 30, 24, 1);
             self.rateCurrentBtn = btn;
         }
     }
@@ -846,6 +878,9 @@
     lable.text = @"清晰度";
     lable.textAlignment = NSTextAlignmentCenter;
     lable.textColor = [UIColor whiteColor];
+    if (@available(iOS 8.2, *)) {
+        lable.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
+    }
     [self.resolutionView addSubview:lable];
     [lable mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.equalTo(self.resolutionView.mas_width);
@@ -858,7 +893,8 @@
     for (NSInteger i = 0 ; i < _resolutionArray.count; i++) {
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
         [btn setTitle:_resolutionArray[i] forState:UIControlStateNormal];
-        [btn setTitleColor:RGBA(252, 89, 81, 1) forState:UIControlStateSelected];
+        [btn setTitleColor:[UIColor colorWithRed:250/255.0 green:100/255.0 blue:0/255.0 alpha:1.0] forState:UIControlStateSelected];
+        [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [self.resolutionView addSubview:btn];
         [btn addTarget:self action:@selector(changeResolution:) forControlEvents:UIControlEventTouchUpInside];
         [btn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -868,10 +904,11 @@
             make.centerY.equalTo(self.resolutionView.mas_centerY).offset((self.resolutionArray.count/2.0-i-0.5)*45);
         }];
         btn.tag = MODEL_TAG_BEGIN+i;
-        
+        if (@available(iOS 8.2, *)) {
+            btn.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
+        }
         if ([_resolutionArray[i] isEqualToString:model.playingDefinition]) {
             btn.selected = YES;
-            btn.backgroundColor = RGBA(34, 30, 24, 1);
             self.resoultionCurrentBtn = btn;
         }
     }

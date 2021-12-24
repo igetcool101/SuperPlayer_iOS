@@ -200,8 +200,8 @@ NSNotificationName kSuperPlayerModelFail = @"kSuperPlayerModelFail";
             weakPlayerView.keyFrameDescList = nil;
         }
         
-//        self.playRateArray = @[@"1.0x",@"1.25x",@"1.5x",@"2.0x"];
-//        self.playRate = @"1.0x";
+        self.playRateArray = @[@"1.0x",@"1.25x",@"1.5x",@"2.0x"];
+        self.playRate = @"1.0x";
         [[NSNotificationCenter defaultCenter] postNotificationName:kSuperPlayerModelReady
                                                             object:self
                                                           userInfo:@{

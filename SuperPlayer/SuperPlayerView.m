@@ -946,6 +946,10 @@ static UISlider * _volumeSlider;
         case UIGestureRecognizerStateChanged:{ // 正在移动
             switch (self.panDirection) {
                 case PanDirectionHorizontalMoved:{
+                    //禁止手势快进快退
+                    if (self.disableHorizontalGesture) {
+                        return;
+                    }
                     [self horizontalMoved:veloctyPoint.x]; // 水平移动的方法只要x方向的值
                     break;
                 }
@@ -964,6 +968,10 @@ static UISlider * _volumeSlider;
             // 比如水平移动结束时，要快进到指定位置，如果这里没有判断，当我们调节音量完之后，会出现屏幕跳动的bug
             switch (self.panDirection) {
                 case PanDirectionHorizontalMoved:{
+                    //禁止手势快进快退
+                    if (self.disableHorizontalGesture) {
+                        return;
+                    }
                     self.isPauseByUser = NO;
                     [self seekToTime:self.sumTime];
                     // 把sumTime滞空，不然会越加越多

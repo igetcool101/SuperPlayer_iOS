@@ -59,6 +59,8 @@ typedef NS_ENUM(NSInteger, SuperPlayerLayoutStyle) {
 @property (nonatomic) SuperPlayerControlView *controlView;
 /// 是否允许竖屏手势
 @property (nonatomic) BOOL disableGesture;
+/// 是否禁用横向滑动快进
+@property (nonatomic) BOOL disableHorizontalGesture;
 /// 是否在手势中
 @property (readonly)  BOOL isDragging;
 /// 是否加载成功

@@ -72,7 +72,7 @@
 @property (nonatomic, strong) UIButton       *repeatBtn;
 
 /** 是否全屏播放 */
-@property (nonatomic, assign,getter=isFullScreen)BOOL fullScreen;
+@property (nonatomic, assign)BOOL fullScreen;
 @property (nonatomic, assign,getter=isLockScreen)BOOL isLockScreen;
 @property (nonatomic, strong) UIButton               *pointJumpBtn;
 

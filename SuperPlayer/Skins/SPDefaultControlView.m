@@ -484,7 +484,6 @@
 }
 
 #pragma mark - Private Method
-
 #pragma mark - setter
 - (void)setIsLockScreen:(BOOL)isLockScreen {
     self.lockBtn.selected = isLockScreen;
@@ -713,7 +712,7 @@
 - (void)setHidden:(BOOL)hidden
 {
     [super setHidden:hidden];
-    if (hidden) {        
+    if (hidden) {
         self.resolutionView.hidden = YES;
         self.rateView.hidden        = YES;
         self.moreContentView.hidden = YES;
@@ -723,7 +722,7 @@
         }
     }
     
-    self.lockBtn.hidden = !self.isFullScreen;
+    self.lockBtn.hidden = !self.fullScreen;
     self.isShowSecondView = NO;
     self.pointJumpBtn.hidden = YES;
 }
@@ -739,7 +738,7 @@
     self.rateView.hidden             = YES;
     self.backgroundColor             = [UIColor clearColor];
     self.moreBtn.enabled         = YES;
-    self.lockBtn.hidden              = !self.isFullScreen;
+    self.lockBtn.hidden              = !self.fullScreen;
     
     self.danmakuBtn.enabled = YES;
     self.captureBtn.enabled = YES;

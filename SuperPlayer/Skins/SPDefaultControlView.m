@@ -486,7 +486,10 @@
 #pragma mark - Private Method
 
 #pragma mark - setter
-
+- (void)setIsLockScreen:(BOOL)isLockScreen {
+    self.lockBtn.selected = isLockScreen;
+    _isLockScreen = isLockScreen;
+}
 - (UILabel *)titleLabel {
     if (!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];

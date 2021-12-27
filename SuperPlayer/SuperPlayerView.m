@@ -1126,7 +1126,10 @@ static UISlider * _volumeSlider;
 }
 
 #pragma mark - Setter
-
+- (void)setIsLockScreen:(BOOL)isLockScreen {
+    _isLockScreen = isLockScreen;
+    ((SPDefaultControlView *)self.controlView).isLockScreen = isLockScreen;
+}
 
 /**
  *  设置播放的状态

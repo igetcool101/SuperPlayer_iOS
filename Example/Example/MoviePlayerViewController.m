@@ -413,6 +413,7 @@ __weak UITextField *urlField;
         // demo的时移域名，请根据您项目实际情况修改这里
         _playerView.playerConfig.playShiftDomain = @"vcloudtimeshift.qcloud.com";
         [self setupDanmakuData];
+        _playerView.isLockScreen = YES;
     }
     return _playerView;
 }

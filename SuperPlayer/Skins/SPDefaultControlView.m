@@ -218,11 +218,11 @@
     }];
     self.rateView.hidden        = YES;
     // topImageView上的按钮的文字
-    NSString *rateString = sender.titleLabel.text;
-    if ([rateString isEqualToString:@"1.0x"]) {
-        rateString = @"倍速";
-    }
-    [self.rateBtn setTitle:rateString forState:UIControlStateNormal];
+//    NSString *rateString = sender.titleLabel.text;
+//    if ([rateString isEqualToString:@"1.0x"]) {
+//        rateString = @"倍速";
+//    }
+//    [self.rateBtn setTitle:rateString forState:UIControlStateNormal];
     if ([self.delegate respondsToSelector:@selector(controlViewSwitch:withRate:)]) {
         [self.delegate controlViewSwitch:self withRate:sender.titleLabel.text];
     }

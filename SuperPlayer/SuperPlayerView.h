@@ -94,6 +94,10 @@ typedef NS_ENUM(NSInteger, SuperPlayerLayoutStyle) {
  */
 @property NSArray *keyFrameDescList;
 /**
+ * 录播课只支持横屏，默认NO ,解锁情况下也无法横屏
+ */
+@property (nonatomic, assign) BOOL recordHorizontalScreen;    //!< 录播课只支持横屏
+/**
  * 播放model
  */
 - (void)playWithModel:(SuperPlayerModel *)playerModel;

@@ -839,6 +839,7 @@ static UISlider * _volumeSlider;
  */
 - (void)onDeviceOrientationChange {
     if (!self.isLoaded) { return; }
+    if (self.recordHorizontalScreen) {return;}//录播课只能横屏播放，解锁了也不能竖屏
     if (self.isLockScreen) { return; }
     if (self.didEnterBackground) { return; };
 //    if (SuperPlayerWindowShared.isShowing) { return; }

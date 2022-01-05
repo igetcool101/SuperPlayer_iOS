@@ -1320,6 +1320,7 @@ static UISlider * _volumeSlider;
     if ([self.playerModel.playRate isEqualToString:rate])
         return;
     self.playerModel.playRate = rate;
+    self.playerConfig.playRate= rate.floatValue;//重播的时候还是这个倍速
     [self.vodPlayer setRate:[rate floatValue]];
 }
 

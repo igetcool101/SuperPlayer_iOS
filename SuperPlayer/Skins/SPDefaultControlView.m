@@ -201,10 +201,10 @@
         make.width.height.mas_equalTo(16);
         make.centerY.mas_equalTo(self.resoultionCurrentBtn);
     }];
-    
+    NSString *str1 = [sender.titleLabel.text substringToIndex:2];
     // topImageView上的按钮的文字
-    [self.resolutionBtn setTitle:sender.titleLabel.text forState:UIControlStateNormal];
-    [self.delegate controlViewSwitch:self withDefinition:sender.titleLabel.text];
+    [self.resolutionBtn setTitle:str1 forState:UIControlStateNormal];
+    [self.delegate controlViewSwitch:self withDefinition:str1];
 }
 
 - (void)changePlayRate:(UIButton *)sender {
@@ -909,7 +909,7 @@
         if (@available(iOS 8.2, *)) {
             btn.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
         }
-        if ([_resolutionArray[i] isEqualToString:model.playingDefinition]) {
+        if ([_resolutionArray[i] containsString:model.playingDefinition]) {
             btn.selected = YES;
             self.resoultionCurrentBtn = btn;
         }

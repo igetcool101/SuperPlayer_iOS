@@ -73,7 +73,7 @@ NSNotificationName kSuperPlayerModelFail = @"kSuperPlayerModelFail";
 - (NSInteger)playingDefinitionIndex
 {
     for (int i = 0; i < self.multiVideoURLs.count; i++) {
-        if ([self.multiVideoURLs[i].title isEqualToString:self.playingDefinition]) {
+        if ([self.multiVideoURLs[i].title containsString:self.playingDefinition]) {
             return i;
         }
     }

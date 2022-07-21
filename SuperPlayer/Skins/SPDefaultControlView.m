@@ -340,7 +340,7 @@
     [DataReport report:@"change_resolution" param:nil];
     [self.resolutionView addSubview:self.arrowImg];
     [self.arrowImg mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.mas_equalTo(self.resolutionView).offset(-35);
+        make.centerX.mas_equalTo(self.resolutionView).offset(-60);
         make.width.height.mas_equalTo(16);
         make.centerY.mas_equalTo(self.resoultionCurrentBtn);
     }];

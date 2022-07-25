@@ -197,7 +197,7 @@
     self.resoultionCurrentBtn.selected = YES;
     
     [self.arrowImg mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.mas_equalTo(self.resolutionView).offset(-35);
+        make.centerX.mas_equalTo(self.resolutionView).offset(-60);
         make.width.height.mas_equalTo(16);
         make.centerY.mas_equalTo(self.resoultionCurrentBtn);
     }];

@@ -1314,6 +1314,7 @@ static UISlider * _volumeSlider;
             [self.vodPlayer startPlay:url];
         }
     }
+    [self.controlView playerBegin:self.playerModel isLive:self.isLive isTimeShifting:self.isShiftPlayback isAutoPlay:self.autoPlay];
 }
 
 //切换倍速

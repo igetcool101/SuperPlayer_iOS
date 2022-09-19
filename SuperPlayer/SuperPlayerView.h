@@ -124,5 +124,8 @@ typedef NS_ENUM(NSInteger, SuperPlayerLayoutStyle) {
  *  @param dragedSeconds 视频跳转的秒数
  */
 - (void)seekToTime:(NSInteger)dragedSeconds;
-
+//轻点手势
+- (void)singleTapAction:(UIGestureRecognizer *)gesture;
+//双击手势
+- (void)doubleTapAction:(UIGestureRecognizer *)gesture;
 @end

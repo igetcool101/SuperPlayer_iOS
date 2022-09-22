@@ -85,6 +85,9 @@ typedef NS_ENUM(NSInteger, SuperPlayerLayoutStyle) {
 @property SuperPlayerViewConfig *playerConfig;
 /// 循环播放
 @property (nonatomic) BOOL loop;
+//是否是手势点击全屏
+@property (nonatomic) BOOL isGesturesFullScreen;
+
 /**
  * 视频雪碧图
  */

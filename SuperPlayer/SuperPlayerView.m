@@ -111,7 +111,7 @@ static UISlider * _volumeSlider;
     // 监测设备方向
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(onDeviceOrientationChange)
+                                             selector:@selector(onStatusBarOrientationChange)
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
     
@@ -120,6 +120,8 @@ static UISlider * _volumeSlider;
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
 }
+
+
 
 #pragma mark - layoutSubviews
 
@@ -470,7 +472,7 @@ static UISlider * _volumeSlider;
     UIDeviceOrientation targetOrientation = [UIDevice currentDevice].orientation;
     if (fullScreen) {
         if (!UIDeviceOrientationIsLandscape(targetOrientation)) {
-            targetOrientation = UIDeviceOrientationLandscapeLeft;
+            targetOrientation = UIDeviceOrientationLandscapeRight;
         }
     } else {
         if (!UIDeviceOrientationIsPortrait(targetOrientation)) {
@@ -581,20 +583,38 @@ static UISlider * _volumeSlider;
             [[self findTopViewController].view addSubview:self];
             __weak typeof(self) weakSelf = self;
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_fullScreenBlackView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                    make.width.equalTo(@(ScreenWidth));
-                    make.height.equalTo(@(ScreenHeight));
-                    make.center.equalTo([weakSelf findTopViewController].view);
-                }];
-                [weakSelf mas_remakeConstraints:^(MASConstraintMaker *make) {
-                    if (IsIPhoneX) {
-                        make.width.equalTo(@(ScreenWidth - 68));
-                    } else {
+                if (self.isGesturesFullScreen&&@available(iOS 16.0, *)) {
+                    [_fullScreenBlackView mas_remakeConstraints:^(MASConstraintMaker *make) {
+                        make.width.equalTo(@(ScreenHeight));
+                        make.height.equalTo(@(ScreenWidth));
+                        make.center.equalTo([weakSelf findTopViewController].view);
+                    }];
+                    [weakSelf mas_remakeConstraints:^(MASConstraintMaker *make) {
+                        if (IsIPhoneX) {
+                            make.width.equalTo(@(ScreenHeight - 68));
+                        } else {
+                            make.width.equalTo(@(ScreenHeight));
+                        }
+                        make.height.equalTo(@(ScreenWidth));
+                        make.center.equalTo([weakSelf findTopViewController].view);
+                    }];
+                }else{
+                    [_fullScreenBlackView mas_remakeConstraints:^(MASConstraintMaker *make) {
                         make.width.equalTo(@(ScreenWidth));
-                    }
-                    make.height.equalTo(@(ScreenHeight));
-                    make.center.equalTo([weakSelf findTopViewController].view);
-                }];
+                        make.height.equalTo(@(ScreenHeight));
+                        make.center.equalTo([weakSelf findTopViewController].view);
+                    }];
+                    [weakSelf mas_remakeConstraints:^(MASConstraintMaker *make) {
+                        if (IsIPhoneX) {
+                            make.width.equalTo(@(ScreenWidth - 68));
+                        } else {
+                            make.width.equalTo(@(ScreenWidth));
+                        }
+                        make.height.equalTo(@(ScreenHeight));
+                        make.center.equalTo([weakSelf findTopViewController].view);
+                    }];
+                }
+                
             });
         }
     } else {
@@ -650,7 +670,7 @@ static UISlider * _volumeSlider;
     if (orientation == UIInterfaceOrientationPortrait) {
         return CGAffineTransformIdentity;
     } else if (orientation == UIInterfaceOrientationLandscapeLeft){
-        return CGAffineTransformMakeRotation(-M_PI_2);
+        return CGAffineTransformIdentity;
     } else if(orientation == UIInterfaceOrientationLandscapeRight){
 //        return CGAffineTransformMakeRotation(M_PI_2);
         return CGAffineTransformIdentity;
@@ -729,8 +749,9 @@ static UISlider * _volumeSlider;
 - (void)setFullScreen:(BOOL)fullScreen {
 
     if (_isFullScreen != fullScreen) {
-        [self _adjustTransform:[self _orientationForFullScreen:fullScreen]];
+        self.isGesturesFullScreen = YES;
         [self _switchToFullScreen:fullScreen];
+        [self _adjustTransform:[self _orientationForFullScreen:fullScreen]];
         [self _switchToLayoutStyle:fullScreen ? SuperPlayerLayoutStyleFullScreen : SuperPlayerLayoutStyleCompact];
     }
     _isFullScreen = fullScreen;
@@ -839,6 +860,7 @@ static UISlider * _volumeSlider;
  */
 - (void)onDeviceOrientationChange {
     if (!self.isLoaded) { return; }
+    if (self.isGesturesFullScreen) {return;}
     if (self.recordHorizontalScreen) {return;}//录播课只能横屏播放，解锁了也不能竖屏
     if (self.isLockScreen) { return; }
     if (self.didEnterBackground) { return; };
@@ -1274,6 +1296,7 @@ static UISlider * _volumeSlider;
 - (void)controlViewBackAction:(id)sender {
     if (self.isFullScreen) {
         self.isFullScreen = NO;
+        self.isGesturesFullScreen = NO;
         return;
     }
     if ([self.delegate respondsToSelector:@selector(superPlayerBackAction:)]) {

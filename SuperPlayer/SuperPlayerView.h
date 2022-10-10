@@ -87,6 +87,7 @@ typedef NS_ENUM(NSInteger, SuperPlayerLayoutStyle) {
 @property (nonatomic) BOOL loop;
 //是否是手势点击全屏
 @property (nonatomic) BOOL isGesturesFullScreen;
+@property (nonatomic) BOOL isBackGesturesFullScreen;
 
 /**
  * 视频雪碧图

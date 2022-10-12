@@ -217,6 +217,7 @@ static UISlider * _volumeSlider;
         [self mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_offset(UIEdgeInsetsZero);
         }];
+//        self.isBackGesturesFullScreen = NO;
     }
 }
 
@@ -731,7 +732,6 @@ static UISlider * _volumeSlider;
 - (void)setFullScreen:(BOOL)fullScreen {
 
     if (_isFullScreen != fullScreen) {
-        self.isGesturesFullScreen = YES;
         [self _switchToFullScreen:fullScreen];
         [self _adjustTransform:[self _orientationForFullScreen:fullScreen]];
         [self _switchToLayoutStyle:fullScreen ? SuperPlayerLayoutStyleFullScreen : SuperPlayerLayoutStyleCompact];
@@ -809,7 +809,7 @@ static UISlider * _volumeSlider;
 
 // 状态条变化通知（在前台播放才去处理）
 - (void)onStatusBarOrientationChange {
-    [self onDeviceOrientationChange];
+//    [self onDeviceOrientationChange];
     return;
     if (!self.didEnterBackground) {
         UIInterfaceOrientation orientation = (UIInterfaceOrientation)[UIDevice currentDevice].orientation;
@@ -845,7 +845,9 @@ static UISlider * _volumeSlider;
     UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     if (@available(iOS 16.0, *)) {
         if (self.isGesturesFullScreen&&orientation == UIDeviceOrientationPortrait) {return;}
-        if (self.isBackGesturesFullScreen&&orientation == UIDeviceOrientationLandscapeLeft) {return;}
+        if (self.isBackGesturesFullScreen&&orientation == UIDeviceOrientationLandscapeLeft) {
+            return;
+        }
     }
     if (self.recordHorizontalScreen) {return;}//录播课只能横屏播放，解锁了也不能竖屏
     if (self.isLockScreen) { return; }
@@ -1292,6 +1294,7 @@ static UISlider * _volumeSlider;
 }
 
 - (void)controlViewChangeScreen:(SuperPlayerControlView *)controlView withFullScreen:(BOOL)isFullScreen {
+    self.isGesturesFullScreen = YES;
     self.isFullScreen = isFullScreen;
 }
 

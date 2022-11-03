@@ -166,7 +166,7 @@
     [self.lockBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.mas_leading).offset(15);
         make.centerY.equalTo(self.mas_centerY);
-        make.width.height.mas_equalTo(32);
+        make.width.height.mas_equalTo(36);
     }];
     
     

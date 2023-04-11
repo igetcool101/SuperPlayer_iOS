@@ -66,7 +66,8 @@ static NSMutableArray<NSString *> *allDownloadUrls;
         }
         [allDownloadUrls addObject:result];
         allDownloadMsg[result] = @"准备下载";
-        [TXVodDownloadManager.shareInstance startDownloadUrl:result];
+//        [TXVodDownloadManager.shareInstance startDownloadUrl:result];
+        [[TXVodDownloadManager shareInstance] startDownload:nil url:result];
         [self.tableView reloadData];
     }
 }
@@ -123,7 +124,7 @@ static NSMutableArray<NSString *> *allDownloadUrls;
         }]];
     } else if (allDownloadInfo[url] == nil) {
         [alert addAction:[UIAlertAction actionWithTitle:@"恢复下载" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            allDownloadInfo[url] = [TXVodDownloadManager.shareInstance startDownloadUrl:url];
+            allDownloadInfo[url] =  [[TXVodDownloadManager shareInstance] startDownload:nil url:url];
         }]];
     } else {
         [alert addAction:[UIAlertAction actionWithTitle:@"停止下载" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {

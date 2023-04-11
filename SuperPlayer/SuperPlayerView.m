@@ -333,7 +333,8 @@ static UISlider * _volumeSlider;
         
         
         self.livePlayer.enableHWAcceleration = self.playerConfig.hwAcceleration;
-        [self.livePlayer startPlay:videoURL type:liveType];
+//        [self.livePlayer startPlay:videoURL type:liveType];
+        [self.livePlayer startLivePlay:videoURL type:liveType];
         // 时移
         [TXLiveBase setAppID:[NSString stringWithFormat:@"%ld", _playerModel.videoId.appId]];
         TXCUrl *curl = [[TXCUrl alloc] initWithString:videoURL];
@@ -382,7 +383,7 @@ static UISlider * _volumeSlider;
         
         self.vodPlayer.enableHWAcceleration = self.playerConfig.hwAcceleration;
         [self.vodPlayer setStartTime:self.startTime]; self.startTime = 0;
-        [self.vodPlayer startPlay:videoURL];
+        [self.vodPlayer startVodPlay:videoURL];
         [self.vodPlayer setBitrateIndex:self.playerModel.playingDefinitionIndex];
         
         [self.vodPlayer setRate:self.playerConfig.playRate];
@@ -1324,7 +1325,7 @@ static UISlider * _volumeSlider;
         } else {
             CGFloat startTime = [self.vodPlayer currentPlaybackTime];
             [self.vodPlayer setStartTime:startTime];
-            [self.vodPlayer startPlay:url];
+            [self.vodPlayer startVodPlay:url];
         }
     }
     [self.controlView playerBegin:self.playerModel isLive:self.isLive isTimeShifting:self.isShiftPlayback isAutoPlay:self.autoPlay];

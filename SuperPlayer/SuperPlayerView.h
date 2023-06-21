@@ -53,6 +53,8 @@ typedef NS_ENUM(NSInteger, SuperPlayerLayoutStyle) {
 @property (nonatomic, assign, setter=setFullScreen:) BOOL isFullScreen;
 /// 是否锁定旋转
 @property (nonatomic, assign) BOOL isLockScreen;
+/// 是否锁屏续播
+@property (nonatomic, assign) BOOL isContinuation;
 /// 是否是直播流
 @property (readonly) BOOL isLive;
 /// 超级播放器控制层

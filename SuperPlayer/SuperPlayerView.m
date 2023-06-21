@@ -786,6 +786,11 @@ static UISlider * _volumeSlider;
     if (self.isLive) {
         return;
     }
+    if (self.isContinuation) {
+        return;
+    }
+    /// 是否锁屏续播
+
     if (!self.isPauseByUser && (self.state != StateStopped && self.state != StateFailed)) {
         [_vodPlayer pause];
         self.state = StatePause;
